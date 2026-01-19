@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SLM 26 | Kadro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43);
+      color: #fff;
+      min-height: 100vh;
+      padding: 25px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 { font-size: 22px; font-weight: 800; }
+
+    .back {
+      cursor: pointer;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .back:hover { opacity: 1; }
+
+    table {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: #1e2a32;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    th {
+      background: #162027;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    tr:nth-child(even) { background: #1a252c; }
+
+    tr:hover { background: #24323b; }
+
+    .pos { font-weight: 600; }
+
+    .rating {
+      font-weight: 800;
+      color: #00ff9c;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      font-size: 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      background: #00ff9c;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn.out {
+      background: #ff5c5c;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1 id="clubTitle">Kadro</h1>
+  <div class="back" onclick="goBack()">← Dashboard</div>
+</header>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Oyuncu</th>
+      <th>Mevki</th>
+      <th>Yaş</th>
+      <th>Rating</th>
+      <th>İlk 11</th>
+    </tr>
+  </thead>
+  <tbody id="squadBody">
+    <!-- Oyuncular -->
+  </tbody>
+</table>
+
+<footer>
+  © 2026 SLM 26
+</footer>
+
+<script>
+  const save = JSON.parse(localStorage.getItem("slm26_save"));
+  if (!save || !save.club) window.location.href = "index.html";
+
+  document.getElementById("clubTitle").innerText = save.club.name + " Kadrosu";
+
+  // Demo kadro (ileride JSON / database)
+  if (!save.squad) {
+    save.squad = [
+      { id: 1, name: "Kaleci 1", pos: "GK", age: 27, rating: 78, xi: true },
+      { id: 2, name: "Sağ Bek", pos: "RB", age: 25, rating: 75, xi: true },
+      { id: 3, name: "Stoper 1", pos: "CB", age: 29, rating: 80, xi: true },
+      { id: 4, name: "Stoper 2", pos: "CB", age: 24, rating: 77, xi: true },
+      { id: 5, name: "Sol Bek", pos: "LB", age: 26, rating: 76, xi: true },
+      { id: 6, name: "Ön Libero", pos: "DM", age: 28, rating: 81, xi: true },
+      { id: 7, name: "Merkez O.S.", pos: "CM", age: 23, rating: 74, xi: true },
+      { id: 8, name: "10 Numara", pos: "AM", age: 30, rating: 83, xi: true },
+      { id: 9, name: "Sağ Kanat", pos: "RW", age: 22, rating: 72, xi: true },
+      { id:10, name: "Sol Kanat", pos: "LW", age: 24, rating: 76, xi: true },
+      { id:11, name: "Forvet", pos: "ST", age: 27, rating: 84, xi: true },
+      { id:12, name: "Yedek Forvet", pos: "ST", age: 21, rating: 68, xi: false }
+    ];
+    localStorage.setItem("slm26_save", JSON.stringify(save));
+  }
+
+  const tbody = document.getElementById("squadBody");
+
+  function render() {
+    tbody.innerHTML = "";
+    save.squad.forEach((p, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${p.name}</td>
+        <td class="pos">${p.pos}</td>
+        <td>${p.age}</td>
+        <td class="rating">${p.rating}</td>
+        <td>
+          <button class="btn ${p.xi ? "out" : ""}" onclick="toggleXI(${p.id})">
+            ${p.xi ? "Çıkar" : "Ekle"}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function toggleXI(id) {
+    const player = save.squad.find(p => p.id === id);
+    player.xi = !player.xi;
+    localStorage.setItem("slm26_save", JSON.stringify(save));
+    render();
+  }
+
+  function goBack() {
+    window.location.href = "dashboard.html";
+  }
+
+  render();
+</script>
+
+</body>
+</html>

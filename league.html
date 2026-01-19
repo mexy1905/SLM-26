@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SLM 26 | Lig</title>
+  <style>
+    body { font-family: Arial; background:#111; color:#eee; padding:20px }
+    table { border-collapse: collapse; width:100%; margin-bottom:30px }
+    th, td { border:1px solid #444; padding:8px; text-align:center }
+    th { background:#222 }
+    button { padding:6px 12px; cursor:pointer }
+    h2 { margin-top:40px }
+  </style>
+</head>
+<body>
+
+<h1>SLM 26 – Süper Lig</h1>
+
+<p><b>Aktif Hafta:</b> <span id="weekText"></span></p>
+
+<!-- LİG TABLOSU -->
+<h2>Lig Tablosu</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Takım</th>
+      <th>O</th>
+      <th>G</th>
+      <th>B</th>
+      <th>M</th>
+      <th>AV</th>
+      <th>P</th>
+    </tr>
+  </thead>
+  <tbody id="leagueBody"></tbody>
+</table>
+
+<!-- FİKSTÜR -->
+<h2>Fikstür</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Hafta</th>
+      <th>Ev Sahibi</th>
+      <th></th>
+      <th>Deplasman</th>
+      <th>İşlem</th>
+    </tr>
+  </thead>
+  <tbody id="fixtureBody"></tbody>
+</table>
+
+<script>
+/* =====================
+   KAYIT / SAVE
+===================== */
+
+let save = JSON.parse(localStorage.getItem("slm26_save"));
+
+if (!save) {
+  save = {
+    season: { week: 1 },
+    league: [
+      { name:"Galatasaray", played:0, win:0, draw:0, loss:0, gd:0, pts:0 },
+      { name:"Fenerbahçe", played:0, win:0, draw:0, loss:0, gd:0, pts:0 },
+      { name:"Beşiktaş", played:0, win:0, draw:0, loss:0, gd:0, pts:0 },
+      { name:"Trabzonspor", played:0, win:0, draw:0, loss:0, gd:0, pts:0 }
+    ],
+    fixture: [
+      { week:1, home:"Galatasaray", away:"Beşiktaş", played:false },
+      { week:1, home:"Fenerbahçe", away:"Trabzonspor", played:false },
+      { week:2, home:"Beşiktaş", away:"Fenerbahçe", played:false },
+      { week:2, home:"Trabzonspor", away:"Galatasaray", played:false }
+    ]
+  };
+  localStorage.setItem("slm26_save", JSON.stringify(save));
+}
+
+/* =====================
+   LİG TABLOSU
+===================== */
+
+function renderLeague() {
+  const body = document.getElementById("leagueBody");
+  body.innerHTML = "";
+
+  save.league
+    .sort((a,b) => b.pts - a.pts || b.gd - a.gd)
+    .forEach(t => {
+      body.innerHTML += `
+        <tr>
+          <td>${t.name}</td>
+          <td>${t.played}</td>
+          <td>${t.win}</td>
+          <td>${t.draw}</td>
+          <td>${t.loss}</td>
+          <td>${t.gd}</td>
+          <td>${t.pts}</td>
+        </tr>
+      `;
+    });
+}
+
+/* =====================
+   FİKSTÜR
+===================== */
+
+function renderFixture() {
+  document.getElementById("weekText").innerText = save.season.week;
+
+  const body = document.getElementById("fixtureBody");
+  body.innerHTML = "";
+
+  save.fixture.forEach(m => {
+    const active = m.week === save.season.week && !m.played;
+
+    body.innerHTML += `
+      <tr>
+        <td>${m.week}</td>
+        <td>${m.home}</td>
+        <td>vs</td>
+        <td>${m.away}</td>
+        <td>
+          ${active ? `<button onclick="playMatch(${m.week}, '${m.home}', '${m.away}')">Maçı Oyna</button>` : "-"}
+        </td>
+      </tr>
+    `;
+  });
+}
+
+/* =====================
+   MAÇ OYNAT (DUMMY)
+===================== */
+
+function playMatch(week, home, away) {
+  const hg = Math.floor(Math.random()*4);
+  const ag = Math.floor(Math.random()*4);
+
+  const h = save.league.find(t => t.name === home);
+  const a = save.league.find(t => t.name === away);
+
+  h.played++; a.played++;
+  h.gd += hg - ag;
+  a.gd += ag - hg;
+
+  if (hg > ag) {
+    h.win++; h.pts += 3; a.loss++;
+  } else if (hg < ag) {
+    a.win++; a.pts += 3; h.loss++;
+  } else {
+    h.draw++; a.draw++; h.pts++; a.pts++;
+  }
+
+  const match = save.fixture.find(m => m.week === week && m.home === home);
+  match.played = true;
+
+  // haftadaki tüm maçlar bittiyse → hafta arttır
+  const weekMatches = save.fixture.filter(m => m.week === save.season.week);
+  if (weekMatches.every(m => m.played)) {
+    save.season.week++;
+  }
+
+  localStorage.setItem("slm26_save", JSON.stringify(save));
+  alert(`${home} ${hg} - ${ag} ${away}`);
+  location.reload();
+}
+
+/* =====================
+   ÇALIŞTIR
+===================== */
+
+renderLeague();
+renderFixture();
+</script>
+
+</body>
+</html>

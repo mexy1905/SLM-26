@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SLM 26 | Sezon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43);
+      color: #fff;
+      min-height: 100vh;
+      padding: 25px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    h1 { font-size: 22px; font-weight: 800; }
+
+    .back {
+      cursor: pointer;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    .back:hover { opacity: 1; }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1e2a32;
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .week {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    .match-box {
+      background: #162027;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      background: #00ff9c;
+      color: #000;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Sezon</h1>
+  <div class="back" onclick="goBack()">← Dashboard</div>
+</header>
+
+<div class="container">
+
+  <div class="week" id="weekText">Hafta 1</div>
+  <div class="info">Mevcut maç aşağıda</div>
+
+  <div class="match-box" id="matchBox">
+    -
+  </div>
+
+  <button class="btn" id="nextBtn" onclick="nextWeek()">Sonraki Hafta</button>
+
+</div>
+
+<footer>
+  © 2026 SLM 26
+</footer>
+
+<script>
+  const save = JSON.parse(localStorage.getItem("slm26_save"));
+  if (!save || !save.club) window.location.href = "index.html";
+
+  // Sezon bilgisi yoksa oluştur
+  if (!save.season) {
+    save.season = { week: 1 };
+    localStorage.setItem("slm26_save", JSON.stringify(save));
+  }
+
+  const weekText = document.getElementById("weekText");
+  const matchBox = document.getElementById("matchBox");
+  const nextBtn = document.getElementById("nextBtn");
+
+  function render() {
+    weekText.innerText = "Hafta " + save.season.week;
+
+    const match = save.fixture.find(f => f.week === save.season.week);
+
+    if (match) {
+      matchBox.innerText = match.home + " vs " + match.away;
+      nextBtn.disabled = false;
+    } else {
+      matchBox.innerText = "Bu hafta maç yok";
+      nextBtn.disabled = true;
+    }
+  }
+
+  function nextWeek() {
+    save.season.week++;
+    localStorage.setItem("slm26_save", JSON.stringify(save));
+    render();
+  }
+
+  function goBack() {
+    window.location.href = "dashboard.html";
+  }
+
+  render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SLM 26 | Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43);
+      color: #fff;
+      min-height: 100vh;
+      padding: 25px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .club-name {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .money {
+      font-size: 16px;
+      font-weight: 600;
+      color: #00ff9c;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1e2a32;
+      border-radius: 16px;
+      padding: 25px;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: #00ff9c;
+    }
+
+    .card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 13px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="club-name" id="clubName">Kulüp</div>
+  <div class="money" id="clubMoney">€0</div>
+</header>
+
+<div class="grid">
+  <div class="card" onclick="go('squad.html')">
+    <h3>📋 Kadro</h3>
+    <p>Oyuncuları incele, diziliş ve ilk 11 ayarla</p>
+  </div>
+
+  <div class="card" onclick="go('tactics.html')">
+    <h3>🧠 Taktikler</h3>
+    <p>Oyun planı, pres, tempo ve savunma ayarları</p>
+  </div>
+
+  <div class="card" onclick="go('transfers.html')">
+    <h3>💰 Transferler</h3>
+    <p>Oyuncu al-sat, bütçeni yönet</p>
+  </div>
+
+  <div class="card" onclick="go('league.html')">
+    <h3>🏆 Lig</h3>
+    <p>Puan durumu, fikstür ve maçlar</p>
+  </div>
+
+  <div class="card" onclick="go('match.html')">
+    <h3>🎮 Maç</h3>
+    <p>Maçı simüle et, sonuçları izle</p>
+  </div>
+
+  <div class="card" onclick="resetGame()">
+    <h3>⚠️ Yeni Kariyer</h3>
+    <p>Mevcut kariyeri sil ve baştan başla</p>
+  </div>
+</div>
+
+<footer>
+  © 2026 SLM 26 – Web Football Manager
+</footer>
+
+<script>
+  const save = JSON.parse(localStorage.getItem("slm26_save"));
+
+  if (!save || !save.club) {
+    window.location.href = "index.html";
+  }
+
+  document.getElementById("clubName").innerText = save.club.name;
+  document.getElementById("clubMoney").innerText =
+    "€" + (save.money / 1000000).toFixed(1) + "M";
+
+  function go(page) {
+    window.location.href = page;
+  }
+
+  function resetGame() {
+    if (confirm("Tüm kariyer silinsin mi?")) {
+      localStorage.removeItem("slm26_save");
+      window.location.href = "index.html";
+    }
+  }
+</script>
+
+</body>
+</html>

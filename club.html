@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SLM 26 | Kulüp Seç</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0f2027;
+      color: #fff;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .clubs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .club-card {
+      background: #1e2a32;
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .club-card:hover {
+      transform: translateY(-5px);
+      border-color: #00ff9c;
+    }
+
+    .club-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .club-info {
+      font-size: 13px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kulübünü Seç</h1>
+  <div class="subtitle">SLM 26 kariyerine başlayacağın takımı seç</div>
+
+  <div class="clubs" id="clubList">
+    <!-- Kulüpler JS ile yüklenecek -->
+  </div>
+
+  <div class="footer">
+    © 2026 SLM 26
+  </div>
+
+  <script>
+    // Basit kulüp listesi (ileride data dosyasına taşınır)
+    const clubs = [
+      { id: 1, name: "Galatasaray", league: "Süper Lig", budget: 15000000, strength: 85 },
+      { id: 2, name: "Fenerbahçe", league: "Süper Lig", budget: 16000000, strength: 86 },
+      { id: 3, name: "Beşiktaş", league: "Süper Lig", budget: 12000000, strength: 82 },
+      { id: 4, name: "Trabzonspor", league: "Süper Lig", budget: 11000000, strength: 80 },
+      { id: 5, name: "Başakşehir", league: "Süper Lig", budget: 9000000, strength: 78 }
+    ];
+
+    const clubList = document.getElementById("clubList");
+
+    clubs.forEach(club => {
+      const div = document.createElement("div");
+      div.className = "club-card";
+      div.innerHTML = `
+        <div class="club-name">${club.name}</div>
+        <div class="club-info">
+          Lig: ${club.league}<br>
+          Bütçe: €${(club.budget / 1000000).toFixed(1)}M<br>
+          Güç: ${club.strength}
+        </div>
+      `;
+
+      div.onclick = () => selectClub(club);
+      clubList.appendChild(div);
+    });
+
+    function selectClub(club) {
+      const save = JSON.parse(localStorage.getItem("slm26_save"));
+      save.club = club;
+      save.money = club.budget;
+      localStorage.setItem("slm26_save", JSON.stringify(save));
+
+      window.location.href = "dashboard.html";
+    }
+  </script>
+
+</body>
+</html>
